@@ -34,7 +34,7 @@ public class CategoryController {
                 .map(resposta -> ResponseEntity.ok(resposta))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-
+/* */
     @GetMapping("/{description}")
     private ResponseEntity<List<Category>> getByDescription(@PathVariable String descreiption) {
         return ResponseEntity.ok(categoryRepository.findAllByDescriptionContainingIgnoreCase(descreiption));
