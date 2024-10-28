@@ -35,4 +35,7 @@ public class Products {
     @JsonIgnoreProperties("products")
     private Category category;
 
+    @ManyToOne
+    @JsonIgnoreProperties("products")
+    private User user;
 }

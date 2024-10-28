@@ -16,7 +16,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/temas")
+@RequestMapping("/categories")
 @CrossOrigin(origins = "*" ,allowedHeaders = "*")
 public class CategoryController {
 

@@ -55,7 +55,7 @@ public class ProductsController {
     public ResponseEntity<Products>put(@Valid @RequestBody Products product){
         if (productsRepository.existsById(product.getId())){
 
-            if (productsRepository.existsById(product.getCategory().getId()))
+            if (categoryRepository.existsById(product.getCategory().getId()))
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(productsRepository.save(product));
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This product needs a category", null);
