@@ -12,5 +12,6 @@ public class UserLogin {
     private String email;
     private String password;
     private String token;
+    private String role;
 }
 

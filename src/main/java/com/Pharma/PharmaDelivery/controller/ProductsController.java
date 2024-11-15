@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,16 +44,19 @@ public class ProductsController {
         return ResponseEntity.ok(productsRepository.findAllByNameContainingIgnoreCase(name));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Products>post(@Valid @RequestBody Products product){
+    public ResponseEntity<Products>createProduct(@Valid @RequestBody Products product){
         if (categoryRepository.existsById(product.getCategory().getId()))
             return ResponseEntity.status(HttpStatus.CREATED)
                 .body(productsRepository.save(product));
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This product needs a category",null);
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
-    public ResponseEntity<Products>put(@Valid @RequestBody Products product){
+    public ResponseEntity<Products>updateProduct(@Valid @RequestBody Products product){
         if (productsRepository.existsById(product.getId())){
 
             if (categoryRepository.existsById(product.getCategory().getId()))
@@ -63,6 +67,7 @@ public class ProductsController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void delete (@PathVariable Long id){

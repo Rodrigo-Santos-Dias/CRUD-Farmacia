@@ -6,6 +6,7 @@ import com.Pharma.PharmaDelivery.repository.CategoryRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,25 +42,29 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Category> post(@Valid @RequestBody Category category) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(categoryRepository.save(category));
     }
 
     @PutMapping
-    public ResponseEntity<Category> put(@Valid @RequestBody Category category) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Category> updateCategory(@Valid @RequestBody Category category) {
         return categoryRepository.findById(category.getId())
                 .map(resposta -> ResponseEntity.status(HttpStatus.OK)
                         .body(categoryRepository.save(category)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        Optional<Category> tema = categoryRepository.findById(id);
 
-        if (tema.isEmpty())
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public void deleteCategory(@PathVariable Long id) {
+        Optional<Category> category = categoryRepository.findById(id);
+
+        if (category.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         categoryRepository.deleteById(id);
