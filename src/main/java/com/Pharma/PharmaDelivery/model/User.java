@@ -5,23 +5,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-
 @Table(name = "tb_user")
 @Entity
 public class User {
@@ -43,13 +32,15 @@ public class User {
     @Email(message = "E-mail deve ser válido")
     private String email;
 
+    @Setter
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+
+    private Set<Role> roles = new HashSet<>();
 
 
     @NotBlank(message = "O atributo senha é obrigatório")
@@ -60,6 +51,35 @@ public class User {
     @JsonIgnoreProperties("user")
     private List<Products> product;
 
+    private boolean enabled;
 
+
+    public void addRoles( Role role){
+        this.roles.add(role);
+    }
+
+    @Override
+    public boolean equals(Object object){
+        if (this == object) return true;
+        if (object == null||getClass() != object.getClass()) return false;
+        User user = (User)object;
+        return Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(email);
+    }
+
+    public User (String name,String email,String password, boolean enabled){
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+    }
+
+    public User(){
+
+    }
 
 }
