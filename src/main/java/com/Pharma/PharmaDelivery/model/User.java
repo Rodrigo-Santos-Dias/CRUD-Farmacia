@@ -14,6 +14,8 @@ import java.util.*;
 @Table(name = "tb_user")
 @Entity
 public class User {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,15 +34,9 @@ public class User {
     @Email(message = "E-mail deve ser válido")
     private String email;
 
-    @Setter
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
 
-    private Set<Role> roles = new HashSet<>();
+
+    private Role role;
 
 
     @NotBlank(message = "O atributo senha é obrigatório")
@@ -54,9 +50,7 @@ public class User {
     private boolean enabled;
 
 
-    public void addRoles( Role role){
-        this.roles.add(role);
-    }
+
 
     @Override
     public boolean equals(Object object){
@@ -71,11 +65,12 @@ public class User {
         return Objects.hash(email);
     }
 
-    public User (String name,String email,String password, boolean enabled){
+    public User (String name,String email,String password, boolean enabled,Role role){
         this.name = name;
         this.email = email;
         this.password = password;
         this.enabled = enabled;
+        this.role = role;
     }
 
     public User(){

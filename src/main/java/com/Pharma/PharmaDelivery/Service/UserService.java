@@ -2,6 +2,7 @@ package com.Pharma.PharmaDelivery.Service;
 
 
 
+import com.Pharma.PharmaDelivery.model.Role;
 import com.Pharma.PharmaDelivery.model.User;
 import com.Pharma.PharmaDelivery.model.UserLogin;
 import com.Pharma.PharmaDelivery.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.Authentication;
 
+import java.util.EnumSet;
 import java.util.Optional;
 
 
@@ -36,9 +38,19 @@ public class UserService {
 
         user.setPassword(encodePassword(user.getPassword()));
 
+        if (!isValidRole(user.getRole())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid role!");
+        }
+        user.setRole(user.getRole());
+
         return Optional.of(userRepository.save(user));
 
     }
+
+    private boolean isValidRole(Role role) {
+        return EnumSet.of(Role.USER, Role.ADMIN).contains(role);
+    }
+
 
     public Optional<User> upadateUser(User user) {
 
@@ -79,7 +91,7 @@ public class UserService {
                 // Preenche o Objeto usuarioLogin com os dados encontrados
                 userLogin.get().setId(user.get().getId());
                 userLogin.get().setName(user.get().getName());
-                userLogin.get().setRole(user.get().getRoles().toString());
+                userLogin.get().setRole(user.get().getRole());
                 userLogin.get().setToken(generateToken(userLogin.get().getEmail()));
                 userLogin.get().setPassword("");
 

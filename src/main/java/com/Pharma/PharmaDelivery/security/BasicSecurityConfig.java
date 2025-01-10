@@ -61,6 +61,7 @@ public class BasicSecurityConfig {
                 .cors(withDefaults());
         http
                 .authorizeHttpRequests((auth)->auth
+                        .requestMatchers(HttpMethod.POST,"/products").hasRole("ADMIN")
                         .requestMatchers("/user/login").permitAll()
                         .requestMatchers("/user/register").permitAll()
                         .requestMatchers("/error/**").permitAll()

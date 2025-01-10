@@ -1,6 +1,7 @@
 package com.Pharma.PharmaDelivery.security;
 
 
+import com.Pharma.PharmaDelivery.model.Role;
 import com.Pharma.PharmaDelivery.model.User;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -17,15 +18,14 @@ public class UserDetailsImpl implements UserDetails {
     private static final Long serialVersionUId = 1L;
     private String email;
     private String password;
-    private List<GrantedAuthority> authorities;
+    private Role role;
 
 
     public UserDetailsImpl(User user){
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+        this.role = user.getRole();
+
     }
 
     public UserDetailsImpl(){
@@ -34,7 +34,8 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        if(this.role == Role.ADMIN) return List.of(new SimpleGrantedAuthority("ADMIN"));
+        else return List.of(new SimpleGrantedAuthority("USER"));
     }
 
     @Override
